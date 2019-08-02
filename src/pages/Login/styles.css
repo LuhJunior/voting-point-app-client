@@ -15,3 +15,53 @@
   align-items: center;
   justify-content: center;
 }
+
+.login-title {
+  font-size: 40px;
+  color: white;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.login-form {
+  width: 50%;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.input-container label {
+  color: white;
+  font-size: 20px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.input-container input {
+  font-size: 17px;
+  padding: 4px;
+  margin-top: 5px;
+  height: 30px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: inset 1px 1px 4px #777777;
+}
+
+.button-container {
+  padding: 10px;
+}
+
+.button-style {
+  width: 100%;
+  border: none;
+  padding: 9px;
+  background-color: #7295a2;
+  color: white;
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+.button-style:hover {
+  background-color: #34ebba;
+}
