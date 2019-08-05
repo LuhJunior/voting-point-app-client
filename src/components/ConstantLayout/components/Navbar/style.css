@@ -1,0 +1,45 @@
+.nav-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(#e67066, #2c3268, #090b29);
+}
+
+.info-container {
+  display: flex;
+  width: 100%;
+}
+
+.info-container span {
+  color: white;
+  padding: 10px;
+}
+
+.nav-content hr {
+  width: 98%;
+  color: white;
+}
+
+.nav-content nav {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.nav-content nav a {
+  color: white;
+  font-style: normal;
+  text-decoration: none;
+  padding: 12px;
+  font-family: 'Helvetica';
+  font-size: 13px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  cursor: pointer;
+}
+
+.nav-content nav a:hover {
+  background-color: #e67066 !important;
+}

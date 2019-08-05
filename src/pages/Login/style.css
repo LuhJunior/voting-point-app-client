@@ -2,6 +2,14 @@ body {
   margin: 0px;
 }
 
+main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .container {
   width: 100%;
   height: 100vh;
@@ -30,43 +38,16 @@ body {
 
 .login-form {
   width: 100%;
+  display: flex;
+  flex-direction: column;
   max-width: 400px;
 }
 
 .input-container {
   display: flex;
   padding: 10px;
-  align-items: center;
-  position: relative;
 }
 
-.input-container svg {
-  position: absolute;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  color: #888888;
-  width: 38px;
-  height: 38px;
-}
-
-.input-container label {
-  color: white;
-  font-size: 20px;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
-.input-container input {
-  width: 100%;
-  font-size: 17px;
-  font-family: Helvetica;
-  padding: 4px 4px 4px 55px;
-  height: 40px;
-  border: none;
-  border-radius: 4px;
-  color: #333333;
-  box-shadow: inset 1px 1px 4px #777777;
-}
 
 .button-container {
   padding: 10px;

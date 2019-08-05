@@ -1,0 +1,22 @@
+.header-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background-image: linear-gradient(to right, #e67066, #2c3268, #060b29);
+}
+
+.menu-drop-down {
+  visibility: hidden;
+}
+
+@media(max-width: 850px) {
+  .menu-drop-down {
+    visibility: visible;
+  }
+}
+
+.header-container svg {
+  color: white;
+  padding: 15px;
+  cursor: pointer;
+}
