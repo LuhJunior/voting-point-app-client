@@ -22,7 +22,7 @@ const Login = ({ openSnackbar, history }) => {
     e.preventDefault();
     if (matricula !== '' && senha !== '') {
       try {
-        const resposta = await api.post('sign_in', { matricula, senha });
+        const resposta = await api.post('/sign_in', { matricula, senha });
         const { data } = resposta.data;
         sessionStorage.setItem('@user_token', data);
         history.push('/home');

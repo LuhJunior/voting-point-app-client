@@ -2,7 +2,7 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
-  background-image: linear-gradient(to right, #e67066, #2c3268, #060b29);
+  background-image: linear-gradient(to right, #c16466, #945466);
 }
 
 .menu-drop-down {

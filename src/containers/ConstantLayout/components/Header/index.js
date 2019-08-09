@@ -15,7 +15,6 @@ const Header = () => {
     <div className="header-container">
       <MenuRounded className="menu-drop-down" />
       <NotificationsRounded onClick={() => setOpen(true)} />
-      { dropdown }
     </div>
   );
 }
