@@ -8,6 +8,7 @@ export default styled.button`
   color: white;
   border-radius: 4px;
   font-size: 18px;
+  cursor: pointer;
   :hover {
     background-color: #d26966;
   }

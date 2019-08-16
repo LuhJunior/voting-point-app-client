@@ -23,10 +23,18 @@ const Login = ({ openSnackbar, history }) => {
     if (matricula !== '' && senha !== '') {
       try {
         const resposta = await api.post('/sign_in', { matricula, senha });
-        const { data } = resposta.data;
-        sessionStorage.setItem('@user_token', data);
+        const {
+          data: {
+            jwt,
+            nome,
+            tipo,
+          }
+        } = resposta.data;
+        sessionStorage.setItem('@user_token', jwt);
+        sessionStorage.setItem('@user_name', nome);
+        sessionStorage.setItem('@user_type', tipo);
         history.push('/home');
-        console.log(resposta);
+        // console.log(resposta);
       } catch (err) {
         openSnackbar('Ocorreu um erro');
         console.log(err);

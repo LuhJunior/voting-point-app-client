@@ -10,7 +10,7 @@ import api from '../../services/api';
 
 import {
   Container,
-  Label,
+  Title,
   Form,
   Main,
   IconContainer,
@@ -79,7 +79,7 @@ const CadastrarUser = ({ openSnackbar }) => {
         <IconContainer>
           <PersonAddRounded />
         </IconContainer>
-        <Label>Cadastrar Usuário</Label>
+        <Title>Cadastrar Usuário</Title>
         <Form>
           <InputContainer>
             <InputLabel>Nome</InputLabel>

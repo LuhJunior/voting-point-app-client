@@ -10,7 +10,7 @@ import api from '../../services/api';
 
 import {
   Container,
-  Label,
+  Title,
   Form,
   Main,
   IconContainer,
@@ -61,8 +61,10 @@ const CadastrarUser = ({ openSnackbar }) => {
   };
 
   const handleAddPonto = () => {
-    setPontos([...pontos, ponto]);
-    setPonto('');
+    if (ponto !== '') {
+      setPontos([...pontos, ponto]);
+      setPonto('');
+    }
   };
 
   const Pontos = () => pontos.map((p, index) => (
@@ -93,7 +95,7 @@ const CadastrarUser = ({ openSnackbar }) => {
         <IconContainer>
           <GroupAddRounded />
         </IconContainer>
-        <Label>Cadastrar Reunião</Label>
+        <Title>Cadastrar Reunião</Title>
         <Form>
           <InputContainer>
             <InputLabel>Data</InputLabel>

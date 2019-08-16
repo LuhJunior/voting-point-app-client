@@ -17,7 +17,7 @@ export const Main = styled.main`
   width: 100%;
   max-width: 600px;
   padding: 25px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #ffffff1a;
   border-radius: 5px;
 `;
 
@@ -32,7 +32,7 @@ export const IconContainer = styled.div`
   }
 `;
 
-export const Label = styled.h1`
+export const Title = styled.h1`
   font-family: 'Helvetica';
   font-size: 24px;
   font-weight: 500;

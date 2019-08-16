@@ -13,13 +13,17 @@
 }
 
 .info-container span {
+  font-family: 'Helvetica';
+  font-size: 15px;
   color: white;
   padding: 10px;
 }
 
 .nav-content hr {
-  width: 98%;
+  width: 90%;
   color: white;
+  height: 3px;
+  background: white;
 }
 
 .nav-content nav {
