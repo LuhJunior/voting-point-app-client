@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
-import { withRouter, Link } from 'react-router-dom';
-import './style.css';
+import React from 'react';
+import {
+  HomeRounded,
+  PersonRounded,
+  PersonAddRounded,
+  PersonOutlineRounded,
+  GroupRounded,
+  GroupAddRounded,
+  PeopleOutlineRounded,
+  ExitToAppRounded,
+} from '@material-ui/icons';
+import { withRouter } from 'react-router-dom';
+
+import Nav from '../../../../components/Nav';
+import NavItem from '../../../../components/NavItem';
+import NavDropDown from '../../../../components/NavDropDown';
+
+import {
+  Container,
+  InfoContainer,
+  Span,
+  Bar,
+  IconContainer,
+} from './styles';
+
 
 const Navbar = ({ history }) => {
-  const { location: { pathname } } = history;
   const nome = sessionStorage.getItem('@user_name');
   const tipo = sessionStorage.getItem('@user_type');
-
-  const colorBg = (url) => {
-    if (url === pathname) return '#FF9800';
-    return 'transparent';
-  }
 
   const logout = (e) => {
     e.preventDefault();
@@ -18,26 +34,60 @@ const Navbar = ({ history }) => {
     history.push('/');
   }
 
+  const NavIcon = ({ icon: Icon }) => (
+    <IconContainer>
+      <Icon />
+    </IconContainer>
+  );
+
   return (
-    <div className="nav-content">
-      <div className="info-container">
-        <span>Olá, {nome}</span>
-      </div>
-      <hr />
-      <nav>
-        <Link style={{ backgroundColor: colorBg('/home') }} to="/home">Home</Link>
+    <Container>
+      <InfoContainer>
+        <Span>Olá, {nome}</Span>
+      </InfoContainer>
+      <Bar />
+      <Nav>
+        <NavItem to="/home">
+          <NavIcon icon={HomeRounded} />
+          Home
+        </NavItem>
         {
           tipo === 'Administrador' ? (
             <>
-              <Link style={{ backgroundColor: colorBg('/cadastrar_usuario') }} to="/cadastrar_usuario">Cadastar Usuário</Link>
-              <Link style={{ backgroundColor: colorBg('/cadastrar_reuniao') }} to="/cadastrar_reuniao">Cadastrar Reunião</Link>
+              <NavDropDown title="Usuário" icon={PersonRounded}>
+                <NavItem to="/cadastrar_usuario">
+                  <NavIcon icon={PersonAddRounded} />
+                  Cadastrar Usuário
+                </NavItem>
+                <NavItem to="/usuarios">
+                  <NavIcon icon={PersonOutlineRounded} />
+                  Usuários
+                </NavItem>
+              </NavDropDown>
             </>
           ) : null
         }
-        <Link style={{ backgroundColor: colorBg('/reuniao') }} to="/reuniao">Reunião</Link>
-        <a onClick={logout}>Sair</a>
-      </nav>
-    </div>
+        <NavDropDown title="Reunião" icon={GroupRounded}>
+          {
+            tipo === 'Administrador' ? (
+              <NavItem to="/cadastrar_reuniao">
+                <NavIcon icon={GroupAddRounded} />
+                Cadastrar Reunião
+              </NavItem>
+            ) : null
+          }
+          <NavItem to="/reunioes">
+            <NavIcon icon={PeopleOutlineRounded} />
+            Reuniões
+          </NavItem>
+          <NavItem to="/reuniao">Reunião</NavItem>
+        </NavDropDown>
+        <NavItem onClick={logout}>
+          <NavIcon icon={ExitToAppRounded} />
+          Sair
+        </NavItem>
+      </Nav>
+    </Container>
   );
 }
 

@@ -7,7 +7,6 @@ import CadastrarUsuario from '../pages/CadastrarUser';
 import CadastrarReuniao from '../pages/CadastrarReuniao';
 import Reuniao from '../pages/Reuniao';
 
-const isLoggedIn = sessionStorage.getItem('@user_token');
 
 const Routes = () => (
   <Switch>
@@ -18,10 +17,11 @@ const Routes = () => (
   </Switch>
 );
 
-const PrivateRoutes = () => isLoggedIn ? (
-  <ConstantLayout
-    routes={Routes}  
-  />
-) : <Redirect to="/" />;
+
+
+const PrivateRoutes = () => {
+  const isLoggedIn = sessionStorage.getItem('@user_token');
+  return isLoggedIn ? <ConstantLayout routes={Routes} /> : <Redirect to="/" />;
+};
 
 export default PrivateRoutes;

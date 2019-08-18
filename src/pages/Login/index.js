@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PersonRounded, LockRounded } from '@material-ui/icons';
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 
 import Input from '../../components/Input';
 import { withSnackbarBottom } from '../../components/SnackbarBottom';
@@ -9,9 +9,11 @@ import api from '../../services/api';
 
 import './style.css';
 
+
 const Login = ({ openSnackbar, history }) => {
   const [matricula, setMatricula] = useState('');
   const [senha, setSenha] = useState('');
+  const isLoggedIn = sessionStorage.getItem('@user_token');
 
   const handleChange = ({ target: { name, value } }) => {
     if (name === 'matricula') setMatricula(value);
@@ -45,7 +47,10 @@ const Login = ({ openSnackbar, history }) => {
   };
 
   return (
-    <div className="container">
+    isLoggedIn ? (
+      <Redirect to="/home" />
+    ) : (
+      <div className="container">
       <div className="login-container">
         <div className="login-content-container">
           <div className="icon-container">
@@ -97,6 +102,7 @@ const Login = ({ openSnackbar, history }) => {
         <label>Copyright © Cândido Júnior 2019. All Rights Reserved</label>
       </div>
     </div>
+    )
   );
 };
 

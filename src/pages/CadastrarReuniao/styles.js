@@ -80,11 +80,17 @@ export const PlusInput = styled(Input)`
   width: 90%;
 `;
 
-export const ButtonContainer = styled.div`
+export const ButtonsContainer = styled.div`
   display: flex;
   width: 98%;
   padding: 1%;
+  justify-content: space-between;
   margin-top: 10px;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  width: 48%;
 `;
 
 export const PontosContainer = styled.div`

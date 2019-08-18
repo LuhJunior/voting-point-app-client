@@ -2,18 +2,23 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
 
-import './style.css';
+import {
+  Container,
+  NavContainer,
+  ContentContainer,
+  Content,
+} from './styles';
 
 export default ({ routes: Routes }) => (
-  <div className="app-container">
-    <div className="nav-container">
+  <Container>
+    <NavContainer>
       <Navbar />  
-    </div>
-    <div className="content-container">
+    </NavContainer>
+    <ContentContainer>
       <Header />
-      <div className="content">
+      <Content>
         <Routes />
-      </div>
-    </div>
-  </div>
+      </Content>
+    </ContentContainer>
+  </Container>
 );

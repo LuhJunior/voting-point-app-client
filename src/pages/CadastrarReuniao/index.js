@@ -19,6 +19,7 @@ import {
   StyledInput,
   PlusInputContainer,
   PlusInput,
+  ButtonsContainer,
   ButtonContainer,
   PontosContainer,
   PontosLine,
@@ -27,6 +28,9 @@ import {
 
 const CadastrarUser = ({ openSnackbar }) => {
   const [data, setData] = useState('');
+  const [startime, setStartime] = useState('');
+  const [endtime, setEndtime] = useState('');
+  const [cadastrarPontos, setCadastrarPontos] = useState(false);
   const [ponto, setPonto] = useState('');
   const [pontos, setPontos] = useState([]);
   const [tipo, setTipo] = useState('');
@@ -34,6 +38,8 @@ const CadastrarUser = ({ openSnackbar }) => {
 
   const handleChange = ({ target: { name, value } }) => {
     if (name === 'data') setData(value);
+    else if (name === 'startime') setStartime(value);
+    else if (name === 'endtime') setEndtime(value);
     else if (name === 'tipo') setTipo(value);
     else if (name === 'ponto') setPonto(value);
   };
@@ -60,6 +66,14 @@ const CadastrarUser = ({ openSnackbar }) => {
     } */
   };
 
+  const handleAdicionarPontos = () => {
+    setCadastrarPontos(true);
+  };
+
+  const handleAdicionarPontosDepois = () => {
+    setCadastrarPontos(false);
+  };
+
   const handleAddPonto = () => {
     if (ponto !== '') {
       setPontos([...pontos, ponto]);
@@ -68,8 +82,8 @@ const CadastrarUser = ({ openSnackbar }) => {
   };
 
   const Pontos = () => pontos.map((p, index) => (
-    <PontosLine>
-      <PontosText key={index.toString()}>{p}</PontosText>
+    <PontosLine key={index.toString()}>
+      <PontosText>{p}</PontosText>
       <CloseRounded onClick={() => setPontos(pontos.filter((value, i) => i !== index))} />
     </PontosLine>
   ));
@@ -107,6 +121,24 @@ const CadastrarUser = ({ openSnackbar }) => {
             />
           </InputContainer>
           <InputContainer>
+            <InputLabel>Horário de Inicío</InputLabel>
+            <StyledInput 
+              name="startime"
+              type="time"
+              value={startime}
+              onChange={handleChange}
+            />
+          </InputContainer>
+          <InputContainer>
+            <InputLabel>Horário de Término</InputLabel>
+            <StyledInput 
+              name="endtime"
+              type="time"
+              value={endtime}
+              onChange={handleChange}
+            />
+          </InputContainer>
+          <InputContainer>
             <InputLabel>Tipo de reunião</InputLabel>
             <SelectInput 
               name="tipo"
@@ -117,26 +149,52 @@ const CadastrarUser = ({ openSnackbar }) => {
               <Tipos />
             </SelectInput>
           </InputContainer>
-          <InputContainer>
-            <InputLabel>Pontos</InputLabel>
-              <PontosContainer>
-                <Pontos />
-              </PontosContainer>
-              <PlusInputContainer>
-                <PlusInput 
-                  name="ponto"
-                  type="text"
-                  value={ponto}
-                  onChange={handleChange}
-                />
-                <AddBoxRounded onClick={handleAddPonto} />
-              </PlusInputContainer>
-          </InputContainer>
-          <ButtonContainer>
-            <Button onClick={handleSubmit}>
-              CADASTRAR
-            </Button>
-          </ButtonContainer>
+          {
+            cadastrarPontos ? (
+              <>
+                <InputContainer>
+                  <InputLabel>Pontos</InputLabel>
+                    <PontosContainer>
+                      <Pontos />
+                    </PontosContainer>
+                    <PlusInputContainer>
+                      <PlusInput 
+                        name="ponto"
+                        type="text"
+                        value={ponto}
+                        onChange={handleChange}
+                      />
+                      <AddBoxRounded onClick={handleAddPonto} />
+                    </PlusInputContainer>
+                </InputContainer>
+                <ButtonsContainer>
+                  <ButtonContainer>
+                    <Button onClick={handleAdicionarPontosDepois}>
+                      Adicionar Pontos Depois
+                    </Button>
+                  </ButtonContainer>
+                  <ButtonContainer>
+                    <Button onClick={handleSubmit}>
+                      Cadastrar
+                    </Button>
+                  </ButtonContainer>
+                </ButtonsContainer>
+              </>
+            ) : (
+              <ButtonsContainer>
+                <ButtonContainer>
+                  <Button onClick={handleAdicionarPontos}>
+                    Adicionar Pontos
+                  </Button>
+                </ButtonContainer>
+                <ButtonContainer>
+                  <Button onClick={handleSubmit}>
+                    Cadastrar Sem Pontos
+                  </Button>
+                </ButtonContainer>
+              </ButtonsContainer>
+            )
+          }
         </Form>
       </Main>
     </Container>
