@@ -44,26 +44,63 @@ const CadastrarUser = ({ openSnackbar }) => {
     else if (name === 'ponto') setPonto(value);
   };
 
+  const errMessage = (msg) => {
+    openSnackbar(msg);
+    return false;
+  };
+
+  const verifyFields = () => {
+    if (data === '' || startime === '' || endtime === '' || tipo === '') return errMessage('Preencha todos os campos');
+    if (new Date(data) < new Date())  return errMessage('A data não pode ser menor que a data de hoje');
+    if (startime > endtime) return errMessage('O horário de término da reunião não pode ser menor que o horário de inicío');
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
- /*    console.log(nome, matricula, senha, tipo);
-    if (nome !== '' && matricula !== '' && senha != '' && tipo !== '') {
-      try {
-        const resposta = await api.post('/users', {
-          nome,
-          matricula,
-          senha,
-          user_type_id: tipo,
-        });
-        setTipo('');
-        openSnackbar('Usuário cadastrado com sucesso!');
-      } catch (e) {
-        openSnackbar('Ocorreu um erro ao tentar cadastrar a reunião');
-        console.log(e);
+    console.log(data, startime, endtime, tipo);
+    if (verifyFields()) {
+      if (!cadastrarPontos) {
+        try {
+          const resposta = await api.post('/reuniao', {
+            data,
+            hora_inicio: startime,
+            hora_fim: endtime,
+            reuniao_type_id: tipo,
+          });
+          console.log(resposta);
+  
+          openSnackbar('Reunião cadastrada com sucesso!');
+        } catch (e) {
+          openSnackbar('Ocorreu um erro ao tentar cadastrar a reunião');
+          console.log(e);
+        }
+      } else if (pontos.length !== 0) {
+        try {
+          const resposta = await api.post('/reuniao', {
+            data,
+            hora_inicio: startime,
+            hora_fim: endtime,
+            reuniao_type_id: tipo,
+          });
+
+          const { id } = resposta.data.data;
+          pontos.map(async (p) => {
+            await api.post('/ponto', {
+              ponto: p,
+              reuniao_id: id,
+            });
+          });          
+  
+          openSnackbar('Reunião cadastrada com sucesso!');
+        } catch (e) {
+          openSnackbar('Ocorreu um erro ao tentar cadastrar a reunião');
+          console.log(e);
+        }
+      } else {
+        openSnackbar('É necessário adicionar pelomenos um ponto');
       }
-    } else {
-      openSnackbar('Preencha todos os campos');
-    } */
+    }
   };
 
   const handleAdicionarPontos = () => {

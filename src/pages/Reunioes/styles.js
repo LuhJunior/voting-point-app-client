@@ -41,6 +41,11 @@ export const Title = styled.h1`
   color: white;
 `;
 
-
+export const TableContainer = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  align-items: center;
+`;
 
 
