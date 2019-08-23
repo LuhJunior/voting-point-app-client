@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Tooltip, IconButton } from '@material-ui/core';
 import { GroupRounded } from '@material-ui/icons';
+
+import Table from '../../components/Table';
 
 import api from '../../services/api';
 
@@ -9,11 +12,38 @@ import {
   IconContainer,
   Title,
   TableContainer,
+  TableIconsContainer,
+  AtivarIcon,
+  DeletarIcon,
+  EditarIcon,
 } from './styles';
 
 const Reunioes = () => {
   const [reunioes, setReunioes] = useState([]);
 
+  const ReuniaoIcons = useCallback(({ id, date }) => (
+    <TableIconsContainer>
+      {
+        date.toDateString() === new Date().toDateString() ? (
+          <Tooltip title="Ativar Reunião">
+            <IconButton>
+              <AtivarIcon />
+            </IconButton>
+          </Tooltip>
+        ) : null
+      }
+      <Tooltip title="Editar Reunião">
+        <IconButton>
+          <EditarIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Deletar Reunião">
+        <IconButton>
+          <DeletarIcon />
+        </IconButton>
+      </Tooltip>
+    </TableIconsContainer>
+  ));
 
   useEffect(() => {
     (async () => {
@@ -37,30 +67,28 @@ const Reunioes = () => {
         <Title>Reuniões</Title>
       </InfoContainer>
       <TableContainer>
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Horário de Inicío</th>
-              <th>Horário de Término</th>
-              <th>Tipo</th>
-              <th>Pontos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              reunioes.map(({ id, data, hora_inicio, hora_fim, ReuniaoType, Pontos}) => (
-                <tr key={id}>
-                  <td>{data}</td>
-                  <td>{hora_inicio}</td>
-                  <td>{hora_fim}</td>
-                  <td>{ReuniaoType.tipo}</td>
-                  <td>Pontos</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+        <Table
+          header={[
+            'Data',
+            'Horário de Inicío',
+            'Horário de Término',
+            'Tipo',
+            'Pontos',
+            'Opções',
+          ]}
+          data={
+            reunioes.map(({ id, data, hora_inicio, hora_fim, ReuniaoType, Pontos}) => (
+              [
+                new Date(data).toLocaleDateString(),
+                hora_inicio,
+                hora_fim,
+                ReuniaoType.tipo,
+                'Pontos',
+                <ReuniaoIcons id={id} date={new Date(data)} />,
+              ]
+            ))
+          }
+        />
       </TableContainer>
     </Container>
   );

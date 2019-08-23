@@ -8,8 +8,14 @@ import {
 } from './styles';
 
 
-const QuorumCount = ({ next }) => {
+const QuorumCount = ({ socket, next }) => {
   const [quantidade, setQuantidade] = useState(0);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    socket.emit('startMeeting');
+  };
+
   return (
     <Container>
       <InfoContainer>
@@ -17,7 +23,7 @@ const QuorumCount = ({ next }) => {
           Contagem de Quorúm: {quantidade}
         </Info>
         <ButtonContainer>
-          <Button onClick={next}>Começar Reunião</Button>
+          <Button onClick={handleSubmit}>Começar Reunião</Button>
         </ButtonContainer>
       </InfoContainer>
     </Container>
