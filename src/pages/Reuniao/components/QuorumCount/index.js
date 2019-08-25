@@ -13,7 +13,7 @@ const QuorumCount = ({ socket, next }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit('startMeeting');
+    socket.emit('StartMeeting');
   };
 
   return (

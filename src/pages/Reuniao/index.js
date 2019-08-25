@@ -21,7 +21,7 @@ const Reuniao = () => {
 
   const next = (screen) => setEtapa(screen);
 
-  socket.on('showPauta', (data) => {
+  socket.on('pauta', (data) => {
     console.log('mostrar pauta');
     setEtapa('pauta');
   });

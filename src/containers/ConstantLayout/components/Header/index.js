@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
+import { IconButton, Modal } from '@material-ui/core';
 import { NotificationsRounded, NotificationsActiveRounded, MenuRounded } from '@material-ui/icons';
 
-import './style.css';
+import NavBar from '../Navbar';
 
 const Container = styled.div`
   display: flex;
@@ -25,18 +26,46 @@ const MenuIcon = styled(MenuRounded)`
   }
 `;
 
+const ModalContainer = styled.div`
+  display: flex;
+  width: 30%;
+  height: 100%;
+`;
+
+const ButtonContainer = styled(IconButton)`
+  padding: 0px !important;
+`;
+
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [modalOn, setModalOn] = useState(false);
   // const [notifications, setNotifications] = useState([]);
 
   const dropdown = open ? (
     <div></div>
   ) : null;
 
+  const modal = useCallback( modalOn ? (
+    <Modal
+      open
+      onClose={() => setModalOn(false)}
+    >
+      <ModalContainer>
+        <NavBar />
+      </ModalContainer>
+    </Modal>
+  ) : null);
+
+
   return (
     <Container>
-      <MenuIcon />
-      <NotificationsRounded onClick={() => setOpen(true)} />
+      <ButtonContainer onClick={() => setModalOn(true)}>
+        <MenuIcon />
+      </ButtonContainer>
+      <ButtonContainer onClick={() => setOpen(true)}>
+        <NotificationsRounded />
+      </ButtonContainer>
+      { modal }
     </Container>
   );
 }
