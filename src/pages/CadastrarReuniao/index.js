@@ -6,6 +6,8 @@ import SelectInput from '../../components/SelectInput';
 
 import { withSnackbarBottom } from '../../components/SnackbarBottom';
 
+import { getDateString } from '../../utils/date';
+
 import api from '../../services/api';
 
 import {
@@ -51,7 +53,7 @@ const CadastrarUser = ({ openSnackbar }) => {
 
   const verifyFields = () => {
     if (data === '' || startime === '' || endtime === '' || tipo === '') return errMessage('Preencha todos os campos');
-    if (new Date(data) < new Date())  return errMessage('A data não pode ser menor que a data de hoje');
+    if (data < getDateString(new Date()))  return errMessage('A data não pode ser menor que a data de hoje');
     if (startime > endtime) return errMessage('O horário de término da reunião não pode ser menor que o horário de inicío');
     return true;
   }

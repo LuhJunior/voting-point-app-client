@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../../../components/Button';
 import {
   Container,
@@ -7,9 +7,34 @@ import {
   ButtonContainer,
 } from './styles';
 
+import api from '../../../../services/api';
 
-const QuorumCount = ({ socket, next }) => {
+const QuorumCount = ({ reuniaoId, socket, next }) => {
   const [quantidade, setQuantidade] = useState(0);
+
+  socket.on('quorum_count', async () => {
+    try {
+      const resposta = await api.get(`/participacao/reuniao/${reuniaoId}`);
+      const { data } = resposta.data;
+      console.log(data);
+      setQuantidade(data.length);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resposta = await api.get(`/participacao/reuniao/${reuniaoId}`);
+        const { data } = resposta.data;
+        console.log(data);
+        setQuantidade(data.length);
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

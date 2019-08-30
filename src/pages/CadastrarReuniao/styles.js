@@ -65,11 +65,14 @@ export const StyledInput = styled(Input)`
 
 export const PlusInputContainer = styled.div`
   display: flex;
-  width: 100%;
+  width: 101%;
   align-items: center;
+  input {
+    height: 29px;
+  }
   svg {
     height: 55px;
-    width: 10%;
+    width: 9%;
     color: white;
     cursor: pointer;
   }
@@ -135,5 +138,3 @@ export const PontosText = styled.p`
   font-family: 'Helvetica';
   margin: 2px;
 `;
-
-

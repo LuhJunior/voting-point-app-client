@@ -9,6 +9,7 @@ const StyledTable = styled.table`
   border-radius: 2px;
   border-collapse: collapse;
   text-align: left;
+  box-shadow: 1px 1px 1px 1px #ccc;
   thead {
     tr {
       background-color: #995666;
@@ -26,11 +27,11 @@ const Table = ({ header, data }) => {
 
   const Header = useCallback(() => (
     <tr>{ header.map((th, index) => <th key={index}>{th}</th>) }</tr>
-  ));
+  ), [header]);
   
   const Body = useCallback(() => (
     data.map((tr, index) => <tr key={index}>{ tr.map((td, index )=> <td key={index}>{td}</td>) }</tr>)
-  ));
+  ), [data]);
 
   return (
     <StyledTable>

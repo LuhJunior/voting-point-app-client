@@ -43,7 +43,7 @@ const Reunioes = () => {
         </IconButton>
       </Tooltip>
     </TableIconsContainer>
-  ));
+  ), []);
 
   useEffect(() => {
     (async () => {
