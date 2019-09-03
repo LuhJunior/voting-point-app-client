@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "/Users/wendellrios/Sites/voting-point-app-server"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "voting-point-app-client"
+	}
+}

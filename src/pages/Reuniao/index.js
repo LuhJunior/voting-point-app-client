@@ -18,7 +18,9 @@ import { getDateString, getHourString } from '../../utils/date';
 import io from 'socket.io-client';
 import api from '../../services/api';
 
-const socket = io('http://localhost:8000');
+import { serverUrl } from '../../utils/constants';
+
+const socket = io(serverUrl);
 
 const Reuniao = () => {
   const [etapa, setEtapa] = useState('');
@@ -46,7 +48,7 @@ const Reuniao = () => {
         const resposta = await api.get('/reuniao/current');
         const { data } = resposta.data;
         console.log(data);
-        if (data) {
+        if (data && data.length > 0) {
           const r = data[0];
           const { hora_inicio } = r;
           if (getHourString(new Date()) > hora_inicio) {
@@ -59,6 +61,7 @@ const Reuniao = () => {
             setEtapa('quorum');
             socket.emit('quorum_count');
           } else {
+            setReuniao(r);
             setEtapa('antes_reunião');
           }
         } else {
