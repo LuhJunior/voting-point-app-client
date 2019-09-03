@@ -28,11 +28,13 @@ const Login = ({ openSnackbar, history }) => {
         const {
           data: {
             jwt,
+            id,
             nome,
             tipo,
           }
         } = resposta.data;
         sessionStorage.setItem('@user_token', jwt);
+        sessionStorage.setItem('@user_id', id);
         sessionStorage.setItem('@user_name', nome);
         sessionStorage.setItem('@user_type', tipo);
         history.push('/home');

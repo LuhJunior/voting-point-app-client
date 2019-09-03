@@ -7,29 +7,30 @@ import {
   ButtonContainer,
 } from './styles';
 
-import api from '../../../../services/api';
+// import api from '../../../../services/api';
 
 const QuorumCount = ({ reuniaoId, socket, next }) => {
   const [quantidade, setQuantidade] = useState(0);
 
-  socket.on('quorum_count', async () => {
-    try {
+  socket.on('quorum_count', ({ count }) => {
+    setQuantidade(count);
+    /* try {
       const resposta = await api.get(`/participacao/reuniao/${reuniaoId}`);
       const { data } = resposta.data;
       console.log(data);
       setQuantidade(data.length);
     } catch (e) {
       console.log(e);
-    }
+    } */
   });
 
   useEffect(() => {
     (async () => {
       try {
-        const resposta = await api.get(`/participacao/reuniao/${reuniaoId}`);
-        const { data } = resposta.data;
-        console.log(data);
-        setQuantidade(data.length);
+        const id = sessionStorage.getItem('@user_id');
+        const tipo = sessionStorage.getItem('@user_type');
+        if (tipo === 'Administrador') socket.emit('create_room', { secretaryId: id });
+        else socket.emit('join_room', { userId: id });
       } catch (e) {
         console.log(e);
       }
