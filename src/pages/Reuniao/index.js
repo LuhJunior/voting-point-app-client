@@ -25,20 +25,38 @@ const socket = io(serverUrl);
 const Reuniao = () => {
   const [etapa, setEtapa] = useState('');
   const [reuniao, setReuniao] = useState(null);
+  const [ponto, setPonto] = useState(-1);
 
-  const next = (screen) => setEtapa(screen);
+  socket.on('next_topic', () => setPonto(ponto + 1));
+  socket.on('start_meeting', () => setEtapa('votation'));
 
-  socket.on('pauta', (data) => {
-    console.log('mostrar pauta');
-    setEtapa('pauta');
-  });
+  const getPonto = () => {
+    if (ponto === -1) {
+      return ({
+        votavel: false,
+        ponto: 'Informes',
+        anexo: false,
+      });
+    } else if (ponto < reuniao.Pontos.length) {
+      return ({
+        votavel: true,
+        ponto: reuniao.Pontos[ponto].ponto,
+        anexo: false,
+      });
+    }
+    return ({
+      votavel: false,
+      ponto: 'O que ocorrer',
+      anexo: false,
+    });
+  };
 
   const RenderEtapa = () => {
     if (etapa === 'sem_reunião') return <InfoComponent msg="Não existe nenhuma reunião cadastrada para o dia de hoje" />;
     if (etapa === 'antes_reunião')  return <InfoComponent msg={`A Reunião começará às ${reuniao.hora_inicio} horas`} />;
-    if (etapa === 'quorum') return <QuorumCount reuniaoId={reuniao.id} socket={socket} next={() => next('pauta')} />;
-    if (etapa === 'pauta') return <Pauta next={() => next('votation')} />;
-    if (etapa === 'votation') return <Votation />;
+    if (etapa === 'quorum') return <QuorumCount reuniaoId={reuniao.id} socket={socket} />;
+    /* if (etapa === 'pauta') return <Pauta next={() => next('votation')} />; */
+    if (etapa === 'votation') return <Votation socket={socket} {...getPonto()} />;
     return null;
   };
 

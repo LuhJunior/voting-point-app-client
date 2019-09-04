@@ -9,8 +9,9 @@ import {
 
 // import api from '../../../../services/api';
 
-const QuorumCount = ({ reuniaoId, socket, next }) => {
+const QuorumCount = ({ reuniaoId, socket }) => {
   const [quantidade, setQuantidade] = useState(0);
+  const [quorum, setQuorum] = useState(1);
 
   socket.on('quorum_count', ({ count }) => {
     setQuantidade(count);
@@ -38,9 +39,16 @@ const QuorumCount = ({ reuniaoId, socket, next }) => {
   }, []);
 
   const handleSubmit = (e) => {
+    const id = sessionStorage.getItem('@user_id');
     e.preventDefault();
-    socket.emit('StartMeeting');
+    socket.emit('start_meeting', { secretaryId: id });
   };
+
+  const StartButton = () => (quantidade === quorum ? (
+    <ButtonContainer>
+      <Button onClick={handleSubmit}>Começar Reunião</Button>
+    </ButtonContainer>
+  ) : null);
 
   return (
     <Container>
@@ -48,9 +56,7 @@ const QuorumCount = ({ reuniaoId, socket, next }) => {
         <Info>
           Contagem de Quorúm: {quantidade}
         </Info>
-        <ButtonContainer>
-          <Button onClick={handleSubmit}>Começar Reunião</Button>
-        </ButtonContainer>
+        <StartButton />
       </InfoContainer>
     </Container>
   );

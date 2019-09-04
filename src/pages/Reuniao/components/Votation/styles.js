@@ -44,9 +44,9 @@ export const IconContainer = styled.div`
 
 export const Info = styled.p`
   font-family: 'Helvetica';
-  font-size: 20px;
+  font-size: 30px;
   color: white;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 `;
 
 export const ButtonsContainer = styled.div`
