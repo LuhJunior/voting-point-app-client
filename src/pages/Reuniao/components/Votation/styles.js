@@ -3,8 +3,8 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 25px;
+  width: 94%;
+  padding: 3%;
   justify-content: center;
   align-items: center;
   background-color: #ffffff1f;
@@ -57,5 +57,5 @@ export const ButtonsContainer = styled.div`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  width: 33%;
+  width: 32%;
 `;

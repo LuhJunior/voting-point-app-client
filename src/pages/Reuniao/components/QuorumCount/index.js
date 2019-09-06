@@ -30,8 +30,7 @@ const QuorumCount = ({ reuniaoId, socket }) => {
       try {
         const id = sessionStorage.getItem('@user_id');
         const tipo = sessionStorage.getItem('@user_type');
-        if (tipo === 'Administrador') socket.emit('create_room', { secretaryId: id });
-        else socket.emit('join_room', { userId: id });
+        if (tipo !== 'Administrador') socket.emit('join_room', { userId: id });
       } catch (e) {
         console.log(e);
       }

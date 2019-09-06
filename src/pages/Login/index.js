@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PersonRounded, LockRounded } from '@material-ui/icons';
-import { withRouter, Redirect } from "react-router-dom";
+import { withRouter, Redirect } from 'react-router-dom';
 
 import Input from '../../components/Input';
 import { withSnackbarBottom } from '../../components/SnackbarBottom';
@@ -31,7 +31,7 @@ const Login = ({ openSnackbar, history }) => {
             id,
             nome,
             tipo,
-          }
+          },
         } = resposta.data;
         sessionStorage.setItem('@user_token', jwt);
         sessionStorage.setItem('@user_id', id);
@@ -53,57 +53,57 @@ const Login = ({ openSnackbar, history }) => {
       <Redirect to="/home" />
     ) : (
       <div className="container">
-      <div className="login-container">
-        <div className="login-content-container">
-          <div className="icon-container">
-            <PersonRounded className="icon-style" />
-          </div>
-          <main>
-            <h2 className="login-title">Login</h2>
-            <div className="login-form">
-              <form>
-                <div className="input-container">
-                  <Input
-                    name="matricula"
-                    type="text"
-                    placeholder="Matricula"
-                    value={matricula}
-                    maxLength="12"
-                    onChange={handleChange}
-                    Icon={PersonRounded}
-                  />
-                </div>
-                <div className="input-container">
-                  <Input
-                    name="senha"
-                    type="password"
-                    placeholder="Senha"
-                    value={senha}
-                    maxLength="16"
-                    onChange={handleChange}
-                    Icon={LockRounded}
-                  />
-                </div>
-                <div className="button-container">
-                  <button className="button-style" onClick={handleSubmit}>
-                    ENTRAR
-                  </button>
-                </div>
-              </form>
-              <div className="label-container">
-                <label>Esqueci minha senha</label>
-              </div>
-              <div className="line-container">
-                <hr />
-              </div>
+        <div className="login-container">
+          <div className="login-content-container">
+            <div className="icon-container">
+              <PersonRounded className="icon-style" />
             </div>
-          </main>
+            <main>
+              <h2 className="login-title">Login</h2>
+              <div className="login-form">
+                <form>
+                  <div className="input-container">
+                    <Input
+                      name="matricula"
+                      type="text"
+                      placeholder="Matricula"
+                      value={matricula}
+                      maxLength="12"
+                      onChange={handleChange}
+                      Icon={PersonRounded}
+                    />
+                  </div>
+                  <div className="input-container">
+                    <Input
+                      name="senha"
+                      type="password"
+                      placeholder="Senha"
+                      value={senha}
+                      maxLength="16"
+                      onChange={handleChange}
+                      Icon={LockRounded}
+                    />
+                  </div>
+                  <div className="button-container">
+                    <button type="submit" className="button-style" onClick={handleSubmit}>
+                      ENTRAR
+                    </button>
+                  </div>
+                </form>
+                <div className="span-container">
+                  <span>Esqueci minha senha</span>
+                </div>
+                <div className="line-container">
+                  <hr />
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+        <div className="footer">
+          <span>Copyright © Cândido Júnior 2019. All Rights Reserved</span>
         </div>
       </div>
-      <div className="footer">
-        <label>Copyright © Cândido Júnior 2019. All Rights Reserved</label>
-      </div>
-    </div>
     )
   );
 };

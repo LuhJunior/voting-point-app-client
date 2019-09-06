@@ -11,17 +11,40 @@ import {
   ButtonContainer,
 } from './styles';
 
+import { withSnackbarBottom } from '../../../../components/SnackbarBottom';
 
-const Votation = ({ socket, votavel, ponto, anexo }) => {
+import api from '../../../../services/api';
+
+const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar }) => {
   const id = sessionStorage.getItem('@user_id');
   const tipo = sessionStorage.getItem('@user_type');
   const [start, setStart] = useState(false);
-  const [segundos, setSegundos] = useState(90);
+  const [segundos, setSegundos] = useState(30);
+  const [voto, setVoto] = useState(-1);
+
+  const handleSave = async () => {
+    try {
+      const resposta = await api.post('/votacao', {
+        secreto: true,
+        user_id: id,
+        voto_type_id: (voto !== -1 ? voto : 1),
+        ponto_id: pontoId,
+      });
+      console.log(resposta.data);
+      openSnackbar('Voto salvo com sucesso!');
+    } catch (e) {
+      openSnackbar('Occoreu um erro ao salvar o voto');
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     let interId = null;
     if (start && segundos > 0) interId = setInterval(() => setSegundos(segundos - 1), 1000);
-    else setStart(false);
+    if (segundos === 0) {
+      if (tipo === 'Administrador') socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
+      else handleSave();
+    }
     return () => clearInterval(interId);
   }, [start, segundos]);
 
@@ -45,24 +68,28 @@ const Votation = ({ socket, votavel, ponto, anexo }) => {
         <InfoContainer>
           <Info>Tempo Restante: {CountTime()}</Info>
         </InfoContainer>
-        <ButtonContainer>
-          <Button onClick={handleStartVote}>Começar Contagem</Button>
-        </ButtonContainer>
+        {
+          !start ? (
+            <ButtonContainer>
+              <Button onClick={handleStartVote}>Começar Contagem</Button>
+            </ButtonContainer>
+          ) : null
+        }
       </>
     ) : (
       <>
         <InfoContainer>
-          <Info>Tempo Restante: 00:01:30</Info>
+          <Info>Tempo Restante: {CountTime()}</Info>
         </InfoContainer>
         <ButtonsContainer>
           <ButtonContainer>
-            <Button>A favor</Button>
+            <Button mark={voto === 3} onClick={() => setVoto(3)}>A favor</Button>
           </ButtonContainer>
           <ButtonContainer>
-            <Button>Contra</Button>
+            <Button mark={voto === 1} onClick={() => setVoto(1)}>Contra</Button>
           </ButtonContainer>
           <ButtonContainer>
-            <Button>Abster-se</Button>
+            <Button mark={voto === 2} onClick={() => setVoto(2)}>Abster-se</Button>
           </ButtonContainer>
         </ButtonsContainer>
       </>
@@ -76,14 +103,32 @@ const Votation = ({ socket, votavel, ponto, anexo }) => {
   ) : null);
 
   const handleClick = () => {
-    socket.emit('next_topic', { secretaryId: id });
+    socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
   };
 
-  const NextButton = () => (tipo === 'Administrador' && !votavel ? (
-    <ButtonContainer>
-      <Button onClick={handleClick}>Próximo Ponto</Button>
-    </ButtonContainer>
-  ) : null);
+  const handleEndMeeting = () => {
+    socket.emit('end_meeting', { secretaryId: id });
+  };
+
+
+
+  const NextButton = () => {
+    if (tipo === 'Administrador' && !votavel) {
+      if (index === -1) {
+        return (
+          <ButtonContainer>
+            <Button onClick={handleClick}>Próximo Ponto</Button>
+          </ButtonContainer>
+        );
+      }
+      return (
+        <ButtonContainer>
+          <Button onClick={handleEndMeeting}>Finalizar Reunião</Button>
+        </ButtonContainer>
+      );
+    }
+    return null;
+  };
 
   return (
     <Container>
@@ -98,4 +143,4 @@ const Votation = ({ socket, votavel, ponto, anexo }) => {
   );
 };
 
-export default Votation;
+export default withSnackbarBottom(Votation);

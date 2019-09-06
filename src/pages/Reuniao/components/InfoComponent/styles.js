@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  width: 100%;
-  padding: 25px;
+  width: 94%;
+  padding: 3%;
   justify-content: center;
   align-items: flex-start;
   background-color: #ffffff1f;

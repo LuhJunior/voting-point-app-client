@@ -18,6 +18,8 @@ import {
   EditarIcon,
 } from './styles';
 
+import { getDateString } from '../../utils/date';
+
 const Reunioes = () => {
   const [reunioes, setReunioes] = useState([]);
 
@@ -48,6 +50,7 @@ const Reunioes = () => {
   useEffect(() => {
     (async () => {
       try {
+        console.log(await api.get('/voto_type'));
         const resposta = await api.get('reuniao');
         const { data } = resposta.data;
         console.log(data);
@@ -79,12 +82,12 @@ const Reunioes = () => {
           data={
             reunioes.map(({ id, data, hora_inicio, hora_fim, ReuniaoType, Pontos}) => (
               [
-                new Date(data).toLocaleDateString(),
+                new Date(data.replace('-', '/')).toLocaleDateString(),
                 hora_inicio,
                 hora_fim,
                 ReuniaoType.tipo,
                 'Pontos',
-                <ReuniaoIcons id={id} date={new Date(data)} />,
+                <ReuniaoIcons id={id} date={new Date(data.replace('-', '/'))} />,
               ]
             ))
           }

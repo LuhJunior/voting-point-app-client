@@ -12,12 +12,12 @@ export const Container = styled.div`
 
 export const InfoContainer = styled.div`
   display: flex;
-  width: 100%;
+  width: 94%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #ffffff1a;
-  padding: 25px;
+  padding: 3%;
   border-radius: 5px;
   max-width: 600px;
   margin-bottom: 15px;
@@ -40,7 +40,3 @@ export const Title = styled.h1`
   font-weight: 500;
   color: white;
 `;
-
-
-
-

@@ -30,6 +30,7 @@ const ModalContainer = styled.div`
   display: flex;
   width: 30%;
   height: 100%;
+  min-width: 200px;
 `;
 
 const ButtonContainer = styled(IconButton)`

@@ -12,7 +12,7 @@ main {
 
 .container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,11 +22,12 @@ main {
 
 .login-container {
   width: 100%;
-  height: 95%;
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 50px;
 }
 
 .login-title {
@@ -68,13 +69,13 @@ main {
   background-color: #d26966;
 }
 
-.label-container {
+.span-container {
   display: flex;
   width: 100%;
   justify-content: center;
 }
 
-.label-container label {
+.span-container span {
   padding: 12px;
   color: #c1c1c1;
   font-style: italic;
@@ -83,7 +84,7 @@ main {
   text-align: center;
 }
 
-.label-container label:hover {
+.span-container span:hover {
   cursor: pointer;
 }
 
@@ -92,7 +93,11 @@ main {
   margin-bottom: 25px;
 }
 
-.footer label {
+.footer {
+  margin: 10px;
+}
+
+.footer span {
   color: #777777;
   font-family: 'Helvetica';
 }

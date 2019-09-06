@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GroupRounded } from '@material-ui/icons';
 
+import StartMeeting from './components/StartMeeting';
 import QuorumCount from './components/QuorumCount';
 import Pauta from './components/Pauta';
 import Votation from './components/Votation';
@@ -23,29 +24,40 @@ import { serverUrl } from '../../utils/constants';
 const socket = io(serverUrl);
 
 const Reuniao = () => {
+  const tipo = sessionStorage.getItem('@user_type');
   const [etapa, setEtapa] = useState('');
   const [reuniao, setReuniao] = useState(null);
   const [ponto, setPonto] = useState(-1);
 
-  socket.on('next_topic', () => setPonto(ponto + 1));
-  socket.on('start_meeting', () => setEtapa('votation'));
+  socket.on('quorum', () => setEtapa('quorum'));
+  socket.on('start_meeting', () => {
+    setEtapa('votation');
+    setPonto(-1);
+  });
+  socket.on('next_topic', ({ ponto: pt }) => setPonto(pt));
+  socket.on('end_meeting', () => setEtapa('resultado'));
 
   const getPonto = () => {
     if (ponto === -1) {
       return ({
         votavel: false,
+        index: ponto,
         ponto: 'Informes',
         anexo: false,
       });
-    } else if (ponto < reuniao.Pontos.length) {
+    }
+    if (ponto < reuniao.Pontos.length) {
       return ({
         votavel: true,
+        index: ponto,
+        pontoId: reuniao.Pontos[ponto].id,
         ponto: reuniao.Pontos[ponto].ponto,
         anexo: false,
       });
     }
     return ({
       votavel: false,
+      index: ponto,
       ponto: 'O que ocorrer',
       anexo: false,
     });
@@ -53,10 +65,18 @@ const Reuniao = () => {
 
   const RenderEtapa = () => {
     if (etapa === 'sem_reunião') return <InfoComponent msg="Não existe nenhuma reunião cadastrada para o dia de hoje" />;
-    if (etapa === 'antes_reunião')  return <InfoComponent msg={`A Reunião começará às ${reuniao.hora_inicio} horas`} />;
-    if (etapa === 'quorum') return <QuorumCount reuniaoId={reuniao.id} socket={socket} />;
+    if (etapa === 'antes_reunião') return <InfoComponent msg={`A Reunião começará às ${reuniao.hora_inicio} horas`} />;
+    if (etapa === 'criar_sala') {
+      if (tipo === 'Administrador') return <StartMeeting reuniaoId={reuniao.id} socket={socket} next={() => setEtapa('quorum')} />;
+      return <InfoComponent msg="Aguarde a reunião ser habilitada" />;
+    }
+    if (etapa === 'quorum') {
+      if (tipo === 'Administrador') return <QuorumCount reuniaoId={reuniao.id} socket={socket} />;
+      return <Pauta socket={socket} pontos={reuniao.Pontos} />;
+    }
     /* if (etapa === 'pauta') return <Pauta next={() => next('votation')} />; */
     if (etapa === 'votation') return <Votation socket={socket} {...getPonto()} />;
+    if (etapa === 'resultado') return <InfoComponent msg="Resultado da Reunião:" />;
     return null;
   };
 
@@ -76,8 +96,8 @@ const Reuniao = () => {
             });
             // console.log(resposta);
             setReuniao(r);
-            setEtapa('quorum');
-            socket.emit('quorum_count');
+            setEtapa('criar_sala');
+            // socket.emit('quorum_count');
           } else {
             setReuniao(r);
             setEtapa('antes_reunião');
