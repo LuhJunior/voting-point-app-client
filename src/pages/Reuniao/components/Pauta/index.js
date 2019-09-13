@@ -35,7 +35,7 @@ const Pauta = ({ socket, pontos = [] }) => {
 
   return (
     <Container>
-      <Title>Pontos</Title>
+      <Title>Pauta</Title>
       <InfoContainer>
         <RenderPontos />
       </InfoContainer>

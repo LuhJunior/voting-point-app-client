@@ -2,13 +2,13 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
+  max-width: 600px;
   width: 94%;
   padding: 3%;
   justify-content: center;
   align-items: flex-start;
   background-color: #ffffff1f;
   border-radius: 5px;
-  max-width: 600px;
 `;
 
 export const InfoContainer = styled.div`

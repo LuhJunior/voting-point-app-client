@@ -6,6 +6,8 @@ import Table from '../../components/Table';
 
 import api from '../../services/api';
 
+import InfoCard from './components/InfoCard';
+
 import {
   Container,
   InfoContainer,
@@ -69,7 +71,17 @@ const Reunioes = () => {
         </IconContainer>
         <Title>Reuniões</Title>
       </InfoContainer>
-      <TableContainer>
+      {
+        reunioes.map(({ id, data, hora_inicio: horaInicio, hora_fim: horaFim, ReuniaoType, Pontos }) => (
+          <InfoCard
+            data={new Date(data.replace('-', '/')).toLocaleDateString()}
+            horaInicio={horaInicio}
+            horaFim={horaFim}
+            ReuniaoType={ReuniaoType}
+          />
+        ))
+      }
+      {/* <TableContainer>
         <Table
           header={[
             'Data',
@@ -80,7 +92,7 @@ const Reunioes = () => {
             'Opções',
           ]}
           data={
-            reunioes.map(({ id, data, hora_inicio, hora_fim, ReuniaoType, Pontos}) => (
+            reunioes.map(({ id, data, hora_inicio, hora_fim, ReuniaoType, Pontos }) => (
               [
                 new Date(data.replace('-', '/')).toLocaleDateString(),
                 hora_inicio,
@@ -92,7 +104,7 @@ const Reunioes = () => {
             ))
           }
         />
-      </TableContainer>
+      </TableContainer> */}
     </Container>
   );
 };

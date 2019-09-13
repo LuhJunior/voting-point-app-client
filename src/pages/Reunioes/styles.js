@@ -4,6 +4,7 @@ import {
   EditRounded,
   DeleteRounded,
 } from '@material-ui/icons';
+import Card from '../../components/Card';
 
 export const Container = styled.div`
   display: flex;
@@ -15,17 +16,10 @@ export const Container = styled.div`
   background-color: #343467;
 `;
 
-export const InfoContainer = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff1a;
-  padding: 25px;
-  border-radius: 5px;
-  max-width: 700px;
+export const InfoContainer = styled(Card)`
   margin-bottom: 15px;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const IconContainer = styled.div`

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GroupRounded } from '@material-ui/icons';
+import io from 'socket.io-client';
 
 import StartMeeting from './components/StartMeeting';
 import QuorumCount from './components/QuorumCount';
@@ -16,7 +17,6 @@ import {
 
 import { getDateString, getHourString } from '../../utils/date';
 
-import io from 'socket.io-client';
 import api from '../../services/api';
 
 import { serverUrl } from '../../utils/constants';
@@ -24,13 +24,20 @@ import { serverUrl } from '../../utils/constants';
 const socket = io(serverUrl);
 
 const Reuniao = () => {
+  const id = sessionStorage.getItem('@user_id');
   const tipo = sessionStorage.getItem('@user_type');
   const [etapa, setEtapa] = useState('');
   const [reuniao, setReuniao] = useState(null);
   const [ponto, setPonto] = useState(-1);
 
-  socket.on('quorum', () => setEtapa('quorum'));
-  socket.on('start_meeting', () => {
+  socket.on('quorum', () => {
+    if (reuniao && (reuniao.Users.length === 0)) setEtapa('quorum');
+  });
+  socket.on('start_meeting', async () => {
+    await api.post('/participacao', {
+      chegada: getDateString(new Date()),
+      reuniao_id: reuniao.id,
+    });
     setEtapa('votation');
     setPonto(-1);
   });
@@ -46,12 +53,12 @@ const Reuniao = () => {
         anexo: false,
       });
     }
-    if (ponto < reuniao.Pontos.length) {
+    if (ponto < reuniao.Ponto.length) {
       return ({
         votavel: true,
         index: ponto,
-        pontoId: reuniao.Pontos[ponto].id,
-        ponto: reuniao.Pontos[ponto].ponto,
+        pontoId: reuniao.Ponto[ponto].id,
+        ponto: reuniao.Ponto[ponto].ponto,
         anexo: false,
       });
     }
@@ -90,14 +97,24 @@ const Reuniao = () => {
           const r = data[0];
           const { hora_inicio } = r;
           if (getHourString(new Date()) > hora_inicio) {
-            const resposta = await api.post('participacao', {
+            /* const resposta = await api.post('participacao', {
               chegada: getDateString(new Date()),
               reuniao_id: r.id,
-            });
+            }); */
             // console.log(resposta);
             setReuniao(r);
-            setEtapa('criar_sala');
-            // socket.emit('quorum_count');
+            if (r.Users.length === 0) {
+              setEtapa('criar_sala');
+              socket.emit('check_room');
+            } else if (r.Ponto[0].Users.length === 0) {
+              if (tipo === 'Administrador') socket.emit('create_room', { secretaryId: id });
+              if (tipo === 'Conselheiro') socket.emit('join_room', { userId: id });
+              setEtapa('votation');
+              setPonto(-1);
+            } else {
+              setEtapa('votation');
+              setPonto(r.Ponto.findIndex(({ Users }) => (Users.length === 0)));
+            }
           } else {
             setReuniao(r);
             setEtapa('antes_reunião');
