@@ -14,7 +14,7 @@ const StartMeeting = ({ reuniaoId, socket, next }) => {
     e.preventDefault();
     const id = sessionStorage.getItem('@user_id');
     const tipo = sessionStorage.getItem('@user_type');
-    socket.emit('create_room', { secretaryId: id });
+    socket.emit('create_room', { secretaryId: id, reuniaoId });
     next();
   };
 

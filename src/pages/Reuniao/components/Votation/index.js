@@ -42,13 +42,28 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
     let interId = null;
     if (start && segundos > 0) interId = setInterval(() => setSegundos(segundos - 1), 1000);
     if (segundos === 0) {
-      if (tipo === 'Administrador') socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
-      else handleSave();
+      if (tipo === 'Administrador') {
+        setTimeout(() => socket.emit('votation_result', { secretaryId: id, ponto: index + 1 }), 2000);
+        // socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
+      } else {
+        handleSave();
+      }
     }
     return () => clearInterval(interId);
   }, [start, segundos]);
 
-  socket.on('start_vote', () => setStart(true));
+  useEffect(() => {
+    socket.emit('voting_time');
+  }, []);
+
+  socket.on('start_vote', () => {
+    if (votavel) setStart(true);
+  });
+
+  socket.on('voting_time', ({ tempo }) => {
+    setSegundos(tempo);
+    if (tempo < 30 && votavel) setStart(true);
+  });
 
   const CountTime = () => {
     /* const horas = Math.floor(segundos / 3600); */
