@@ -20,8 +20,8 @@ const Login = ({ openSnackbar, history }) => {
     else if (name === 'senha') setSenha(value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     if (matricula !== '' && senha !== '') {
       try {
         const resposta = await api.post('/sign_in', { matricula, senha });
@@ -39,9 +39,9 @@ const Login = ({ openSnackbar, history }) => {
         sessionStorage.setItem('@user_type', tipo);
         history.push('/home');
         // console.log(resposta);
-      } catch (err) {
-        openSnackbar('Ocorreu um erro');
-        console.log(err);
+      } catch (e) {
+        if (e.response.data.data.code === 400) openSnackbar('Matricula e/ou senha inválida(s)');
+        else openSnackbar('Ocorreu um erro');
       }
     } else {
       openSnackbar('Preencha todos os campos');

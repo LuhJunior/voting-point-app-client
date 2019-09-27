@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Tooltip, IconButton } from '@material-ui/core';
-import { GroupRounded } from '@material-ui/icons';
+import { PersonRounded } from '@material-ui/icons';
 
 import Table from '../../components/Table';
 
@@ -20,11 +20,8 @@ import {
   EditarIcon,
 } from './styles';
 
-import { getDateString } from '../../utils/date';
-
-const Reunioes = () => {
-  const [reunioes, setReunioes] = useState([]);
-  const [habilitar, setHabilitar] = useState(false);
+const Usuarios = () => {
+  const [usuarios, setUsuarios] = useState([]);
 
   /* const ReuniaoIcons = useCallback(({ id, date }) => (
     <TableIconsContainer>
@@ -53,13 +50,10 @@ const Reunioes = () => {
   useEffect(() => {
     (async () => {
       try {
-        const resposta = await api.get('/reuniao');
+        const resposta = await api.get('/users/all');
         const { data } = resposta.data;
-        const res = await api.get('/reuniao/current');
-        console.log(res.data);
-        setHabilitar(res.data === null);
-        setReunioes(data);
         console.log(data);
+        setUsuarios(data);
       } catch (e) {
         console.log(e);
       }
@@ -70,34 +64,19 @@ const Reunioes = () => {
     <Container>
       <InfoContainer>
         <IconContainer>
-          <GroupRounded />
+          <PersonRounded />
         </IconContainer>
-        <Title>Reuniões</Title>
+        <Title>Usuários</Title>
       </InfoContainer>
       {
-        reunioes.map(({
-          id,
-          titulo,
-          data,
-          hora_inicio: horaInicio,
-          hora_segunda_chamada: segundaChamada,
-          ReuniaoType: {
-            tipo,
-          },
-          ReuniaoStatus,
-          Ponto,
+        usuarios.map(({
+          id, nome, matricula, UserType: { tipo },
         }) => (
           <InfoCard
             key={id}
-            id={id}
-            titulo={titulo}
-            data={new Date(data.replace('-', '/')).toLocaleDateString()}
-            horaInicio={horaInicio}
-            segundaChamada={segundaChamada}
+            nome={nome}
+            matricula={matricula}
             tipo={tipo}
-            habilitar={habilitar}
-            status={ReuniaoStatus}
-            pontos={Ponto}
           />
         ))
       }
@@ -129,4 +108,4 @@ const Reunioes = () => {
   );
 };
 
-export default Reunioes;
+export default Usuarios;

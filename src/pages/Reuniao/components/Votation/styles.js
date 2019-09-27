@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import Button from '../../../../components/Button';
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -42,11 +44,25 @@ export const IconContainer = styled.div`
   }
 `;
 
+export const InfoTitle = styled.p`
+  font-family: 'Helvetica';
+  font-size: 27px;
+  font-weight: bold;
+  color: white;
+  margin: 10px;
+  @media (max-width: 500px) {
+    font-size: 22px;
+  }
+`;
+
 export const Info = styled.p`
   font-family: 'Helvetica';
-  font-size: 30px;
+  font-size: 26px;
   color: white;
-  /* margin-right: 10px; */
+  margin: 10px;
+  @media (max-width: 500px) {
+    font-size: 21px;
+  }
 `;
 
 export const ButtonsContainer = styled.div`
@@ -58,4 +74,10 @@ export const ButtonsContainer = styled.div`
 export const ButtonContainer = styled.div`
   display: flex;
   width: 32%;
+`;
+
+export const StyledButton = styled(Button)`
+  :hover {
+    background-color: #2c3268;
+  }
 `;

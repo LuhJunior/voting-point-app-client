@@ -42,11 +42,25 @@ export const IconContainer = styled.div`
   }
 `;
 
+export const InfoTitle = styled.p`
+  font-family: 'Helvetica';
+  font-size: 27px;
+  font-weight: bold;
+  color: white;
+  margin: 15px;
+  @media (max-width: 500px) {
+    font-size: 22px;
+  }
+`;
+
 export const Info = styled.p`
   font-family: 'Helvetica';
-  font-size: 30px;
+  font-size: 26px;
   color: white;
-  /* margin-right: 10px; */
+  margin: 15px;
+  @media (max-width: 500px) {
+    font-size: 21px;
+  }
 `;
 
 export const ButtonsContainer = styled.div`
@@ -57,5 +71,8 @@ export const ButtonsContainer = styled.div`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  width: 32%;
+  margin-top: 25px;
+  @media (max-width: 500px) {
+    margin-top: 15px;
+  }
 `;

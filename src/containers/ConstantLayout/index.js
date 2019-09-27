@@ -12,7 +12,7 @@ import {
 export default ({ routes: Routes }) => (
   <Container>
     <NavContainer>
-      <Navbar />  
+      <Navbar />
     </NavContainer>
     <ContentContainer>
       <Header />

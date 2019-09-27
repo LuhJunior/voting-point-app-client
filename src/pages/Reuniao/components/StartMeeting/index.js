@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
 import Button from '../../../../components/Button';
 import {
   Container,
@@ -9,13 +11,10 @@ import {
 
 // import api from '../../../../services/api';
 
-const StartMeeting = ({ reuniaoId, socket, next }) => {
+const StartMeeting = ({ id, tipo, reuniaoId, socket }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const id = sessionStorage.getItem('@user_id');
-    const tipo = sessionStorage.getItem('@user_type');
     socket.emit('create_room', { secretaryId: id, reuniaoId });
-    next();
   };
 
   return (
@@ -28,6 +27,15 @@ const StartMeeting = ({ reuniaoId, socket, next }) => {
       </InfoContainer>
     </Container>
   );
+};
+
+StartMeeting.propTypes = {
+  id: PropTypes.number.isRequired,
+  tipo: PropTypes.string.isRequired,
+  reuniaoId: PropTypes.number.isRequired,
+  socket: PropTypes.shape({
+    emit: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default React.memo(StartMeeting);

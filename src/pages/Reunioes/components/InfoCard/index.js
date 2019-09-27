@@ -1,52 +1,145 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState } from 'react';
+import { Tooltip, IconButton, Modal } from '@material-ui/core';
 
 import Card from '../../../../components/Card';
+import Button from '../../../../components/Button';
+import { withSnackbarBottom } from '../../../../components/SnackbarBottom';
 
-const Container = styled(Card)`
-  margin-bottom: 15px;
-`;
+import {
+  Container,
+  LineContainer,
+  InfoContainer,
+  Title,
+  Info,
+  IconContainer,
+  AtivarIcon,
+  EditarIcon,
+  DeletarIcon,
+  PontosIcon,
+  ModalContainer,
+} from './styles';
 
-const InfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 40%;
-`;
-
-const Title = styled.span`
-  font-family: 'Helvetica';
-  font-size: 20px;
-  font-weight: 300;
-  margin-bottom: 10px;
-  color: white;
-`;
-
-const Info = styled.span`
-  font-family: 'Helvetica';
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: white;
-`;
+import api from '../../../../services/api';
 
 const InfoCard = ({
-  id, data, horaInicio, horaFim, ReuniaoType, Pontos,
+  id, titulo, data, horaInicio, segundaChamada, tipo, habilitar, status, pontos, openSnackbar,
 }) => {
+  const [pontosModal, setPontosModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+
+  const habilitarButton = () => (!habilitar && status === null
+    && data === new Date().toLocaleDateString()
+    && new Date().toLocaleTimeString() < segundaChamada
+  );
+
+  const handleHabilitar = async (e) => {
+    e.preventDefault();
+    try {
+      const resposta = await api.put(`reuniao/status/${id}`, { descricao: 'Habilitada' });
+      openSnackbar('Reunião ativada');
+      console.log(resposta.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleDeletar = async () => {
+    try {
+      const resposta = await api.delete(`reuniao/${id}`);
+      openSnackbar('Reunião deletada');
+      setDeleteModal(false);
+      console.log(resposta.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Container>
-      <InfoContainer>
-        <Title>Data da reunião</Title>
-        <Info>{data}</Info>
-        <Title>Horário de Inicío</Title>
-        <Info>{horaInicio}</Info>
-      </InfoContainer>
-      <InfoContainer>
-        <Title>Tipo da reunião</Title>
-        <Info>{ReuniaoType.tipo}</Info>
-        <Title>Horário de Término</Title>
-        <Info>{horaFim}</Info>
-      </InfoContainer>
+      <LineContainer>
+        <InfoContainer>
+          <Title>Título da reunião</Title>
+          <Info>{titulo}</Info>
+        </InfoContainer>
+        <InfoContainer>
+          <Title>Tipo da reunião</Title>
+          <Info>{tipo}</Info>
+        </InfoContainer>
+      </LineContainer>
+      <LineContainer>
+        <InfoContainer>
+          <Title>Horário de Inicío</Title>
+          <Info>{horaInicio}</Info>
+        </InfoContainer>
+        <InfoContainer>
+          <Title>Segunda Chamada</Title>
+          <Info>{segundaChamada}</Info>
+        </InfoContainer>
+      </LineContainer>
+      <LineContainer>
+        <InfoContainer>
+          <Title>Data da reunião</Title>
+          <Info style={{ marginBottom: 0 }}>{data}</Info>
+        </InfoContainer>
+      </LineContainer>
+      <IconContainer>
+        <Tooltip title="Visualizar Pontos">
+          <IconButton onClick={() => setPontosModal(true)}>
+            <PontosIcon />
+          </IconButton>
+        </Tooltip>
+        {
+          habilitarButton() ? (
+            <Tooltip title="Habilitar Reunião">
+              <IconButton onClick={handleHabilitar}>
+                <AtivarIcon />
+              </IconButton>
+            </Tooltip>
+          ) : null
+        }
+        <Tooltip title="Editar Reunião">
+          <IconButton>
+            <EditarIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Deletar Reunião">
+          <IconButton onClick={() => setDeleteModal(true)}>
+            <DeletarIcon />
+          </IconButton>
+        </Tooltip>
+      </IconContainer>
+      <Modal
+        open={pontosModal}
+        onClose={() => setPontosModal(false)}
+      >
+        <ModalContainer>
+          <Card style={{ flexDirection: 'column' }}>
+            {pontos.map(({ ponto }) => (<LineContainer><Info>{ponto}</Info></LineContainer>))}
+          </Card>
+        </ModalContainer>
+      </Modal>
+      <Modal
+        open={deleteModal}
+        onClose={() => setDeleteModal(false)}
+      >
+        <ModalContainer>
+          <Card>
+            <LineContainer>
+              <Title>Tem certeza que quer apagar a reunião ?</Title>
+            </LineContainer>
+            <LineContainer>
+              <InfoContainer>
+                <Button onClick={handleDeletar}>Deletar</Button>
+              </InfoContainer>
+              <InfoContainer>
+                <Button onClick={() => setDeleteModal(false)}>Cancelar</Button>
+              </InfoContainer>
+            </LineContainer>
+          </Card>
+        </ModalContainer>
+      </Modal>
     </Container>
   );
 };
 
-export default React.memo(InfoCard);
+export default React.memo(withSnackbarBottom(InfoCard));

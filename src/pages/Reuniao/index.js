@@ -32,31 +32,36 @@ const Reuniao = () => {
   const [ponto, setPonto] = useState(-1);
 
   socket.on('quorum', () => {
-    if (reuniao && (reuniao.Users.length === 0)) setEtapa('quorum');
+    if (reuniao) setEtapa('quorum');
   });
+
   socket.on('etapa', ({ etapa: e, ponto: p }) => {
     // console.log(data);
     setEtapa(e);
     if (e === 'votation') setPonto(p);
-
   });
+
   socket.on('start_meeting', async () => {
+    setEtapa('votation');
+    setPonto(-1);
     try {
-      setEtapa('votation');
-      setPonto(-1);
+      console.log(reuniao);
+      await api.post('/participacao', {
+        chegada: getDateString(new Date()),
+        reuniao_id: reuniao.id,
+      });
     } catch (e) {
       console.log(e);
     }
-    await api.post('/participacao', {
-      chegada: getDateString(new Date()),
-      reuniao_id: reuniao.id,
-    });
   });
+
   socket.on('next_topic', ({ ponto: pt }) => {
     setEtapa('votation');
     setPonto(pt);
   });
+
   socket.on('votation_result', () => setEtapa('votation_result'));
+
   socket.on('end_meeting', () => setEtapa('resultado'));
 
   const getPonto = () => {
@@ -86,22 +91,24 @@ const Reuniao = () => {
   };
 
   const RenderEtapa = () => {
+    const userData = {
+      id, tipo, socket,
+    };
     if (etapa === 'sem_reunião') return <InfoComponent msg="Não existe nenhuma reunião cadastrada para o dia de hoje" />;
     if (etapa === 'antes_reunião') return <InfoComponent msg={`A Reunião começará às ${reuniao.hora_inicio} horas`} />;
     if (etapa === 'criar_sala') {
-      if (tipo === 'Administrador') return <StartMeeting reuniaoId={reuniao.id} socket={socket} next={() => setEtapa('quorum')} />;
+      if (tipo === 'Administrador') return <StartMeeting reuniaoId={reuniao.id} {...userData} />;
       return <InfoComponent msg="Aguarde a reunião ser habilitada" />;
     }
     if (etapa === 'quorum') {
-      if (tipo === 'Administrador') return <QuorumCount reuniaoId={reuniao.id} socket={socket} />;
-      return <Pauta socket={socket} pontos={reuniao.Pontos} />;
+      if (tipo === 'Administrador') return <QuorumCount reuniaoId={reuniao.id} {...userData} />;
+      return <Pauta {...userData} pontos={reuniao.Ponto} />;
     }
-    /* if (etapa === 'pauta') return <Pauta next={() => next('votation')} />; */
-    if (etapa === 'votation') return <Votation socket={socket} {...getPonto()} />;
+    if (etapa === 'votation') return <Votation {...userData} {...getPonto()} />;
     if (etapa === 'votation_result') {
       return (
         <VotationResult
-          socket={socket}
+          {...userData}
           index={ponto}
           pontoId={reuniao.Ponto[ponto].id}
           ponto={reuniao.Ponto[ponto].ponto}
@@ -118,17 +125,18 @@ const Reuniao = () => {
         const resposta = await api.get('/reuniao/current');
         const { data } = resposta.data;
         console.log(data);
-        if (data && data.length > 0) {
-          const r = data[0];
-          const { hora_inicio } = r;
-          if (getHourString(new Date()) > hora_inicio) {
+        if (data) {
+          const { id: reuniaoId, hora_inicio: horaInicio } = data;
+          const res = await api.get(`/reuniao/${reuniaoId}`);
+          const { data: mData } = res.data;
+          if (getHourString(new Date()) > horaInicio) {
             /* const resposta = await api.post('participacao', {
               chegada: getDateString(new Date()),
               reuniao_id: r.id,
             }); */
             // console.log(resposta);
-            setReuniao(r);
-            socket.emit('etapa', { id, tipo, reuniaoId: r.id });
+            setReuniao(mData);
+            socket.emit('etapa', { id, tipo, reuniaoId });
             /* if (r.Users.length === 0) {
               setEtapa('criar_sala');
               socket.emit('check_room');
@@ -142,7 +150,7 @@ const Reuniao = () => {
               setPonto(r.Ponto.findIndex(({ Users }) => (Users.length === 0)));
             } */
           } else {
-            setReuniao(r);
+            setReuniao(mData);
             setEtapa('antes_reunião');
           }
         } else {

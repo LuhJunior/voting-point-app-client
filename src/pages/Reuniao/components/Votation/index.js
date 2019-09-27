@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { CloudDownloadRounded } from '@material-ui/icons';
 import Button from '../../../../components/Button';
 import {
   Container,
-  Title,
   InfoContainer,
+  InfoTitle,
   Info,
   IconContainer,
   ButtonsContainer,
   ButtonContainer,
+  StyledButton,
 } from './styles';
 
 import { withSnackbarBottom } from '../../../../components/SnackbarBottom';
 
 import api from '../../../../services/api';
 
-const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar }) => {
-  const id = sessionStorage.getItem('@user_id');
-  const tipo = sessionStorage.getItem('@user_type');
+const Votation = ({
+  id, tipo,
+  socket, votavel, pontoId, index, ponto, anexo,
+  openSnackbar,
+}) => {
   const [start, setStart] = useState(false);
-  const [segundos, setSegundos] = useState(30);
-  const [voto, setVoto] = useState(-1);
+  const [segundos, setSegundos] = useState(10);
+  const [voto, setVoto] = useState('');
 
   const handleSave = async () => {
     try {
       const resposta = await api.post('/votacao', {
-        secreto: true,
+        secreto: false,
         user_id: id,
-        voto_type_id: (voto !== -1 ? voto : 1),
+        voto_type: (voto !== '' ? voto : 'Abstenção'),
         ponto_id: pontoId,
       });
       console.log(resposta.data);
@@ -43,9 +47,8 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
     if (start && segundos > 0) interId = setInterval(() => setSegundos(segundos - 1), 1000);
     if (segundos === 0) {
       if (tipo === 'Administrador') {
-        setTimeout(() => socket.emit('votation_result', { secretaryId: id, ponto: index + 1 }), 2000);
-        // socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
-      } else {
+        setTimeout(() => socket.emit('votation_result', { secretaryId: id }), 2000);
+      } else if (tipo === 'Conselheiro') {
         handleSave();
       }
     }
@@ -62,54 +65,62 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
 
   socket.on('voting_time', ({ tempo }) => {
     setSegundos(tempo);
-    if (tempo < 30 && votavel) setStart(true);
+    if (tempo < 10 && votavel) setStart(true);
   });
 
-  const CountTime = () => {
-    /* const horas = Math.floor(segundos / 3600); */
+  /* const CountTime = () => {
     const min = Math.floor(segundos / 60);
     const seg = Math.floor(segundos % 60);
-    return `00:${min < 10 ? `0${min}` : min}:${seg < 10 ? `0${seg}` : seg}`;
-  };
+    return `${min < 10 ? `0${min}` : min}:${seg < 10 ? `0${seg}` : seg}`;
+  }; */
 
   const handleStartVote = () => {
     socket.emit('start_vote', { secretaryId: id });
-    setStart(true);
   };
 
-  const VoteButton = () => (votavel ? (
-    tipo === 'Administrador' ? (
-      <>
-        <InfoContainer>
-          <Info>Tempo Restante: {CountTime()}</Info>
-        </InfoContainer>
-        {
-          !start ? (
-            <ButtonContainer>
-              <Button onClick={handleStartVote}>Começar Contagem</Button>
-            </ButtonContainer>
-          ) : null
-        }
-      </>
-    ) : (
-      <>
-        <InfoContainer>
-          <Info>Tempo Restante: {CountTime()}</Info>
-        </InfoContainer>
-        <ButtonsContainer>
-          <ButtonContainer>
-            <Button mark={voto === 3} onClick={() => setVoto(3)}>A favor</Button>
-          </ButtonContainer>
-          <ButtonContainer>
-            <Button mark={voto === 1} onClick={() => setVoto(1)}>Contra</Button>
-          </ButtonContainer>
-          <ButtonContainer>
-            <Button mark={voto === 2} onClick={() => setVoto(2)}>Abster-se</Button>
-          </ButtonContainer>
-        </ButtonsContainer>
-      </>
-    )
-  ) : null);
+  const VoteButton = () => {
+    if (votavel) {
+      if (tipo === 'Administrador') {
+        return (
+          <>
+            <InfoContainer>
+              <InfoTitle>Tempo Restante:</InfoTitle>
+              <Info>{`${segundos} segundos`}</Info>
+            </InfoContainer>
+            {
+              !start ? (
+                <ButtonContainer>
+                  <Button onClick={handleStartVote}>Começar Contagem</Button>
+                </ButtonContainer>
+              ) : null
+            }
+          </>
+        );
+      }
+      if (tipo === 'Conselheiro') {
+        return (
+          <>
+            <InfoContainer>
+              <InfoTitle>Tempo Restante:</InfoTitle>
+              <Info>{`${segundos} segundos`}</Info>
+            </InfoContainer>
+            <ButtonsContainer>
+              <ButtonContainer>
+                <StyledButton mark={voto === 'Favorável'} onClick={() => setVoto('Favorável')}>A favor</StyledButton>
+              </ButtonContainer>
+              <ButtonContainer>
+                <StyledButton mark={voto === 'Contrário'} onClick={() => setVoto('Contrário')}>Contra</StyledButton>
+              </ButtonContainer>
+              <ButtonContainer>
+                <StyledButton mark={voto === 'Abstenção'} onClick={() => setVoto('Abstenção')}>Abster-se</StyledButton>
+              </ButtonContainer>
+            </ButtonsContainer>
+          </>
+        );
+      }
+    }
+    return null;
+  };
 
   const AppendButton = () => (anexo ? (
     <IconContainer>
@@ -124,8 +135,6 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
   const handleEndMeeting = () => {
     socket.emit('end_meeting', { secretaryId: id });
   };
-
-
 
   const NextButton = () => {
     if (tipo === 'Administrador' && !votavel) {
@@ -147,8 +156,8 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
 
   return (
     <Container>
-      <Title>Ponto em discussão</Title>
       <InfoContainer>
+        <InfoTitle>Ponto em discussão</InfoTitle>
         <Info>{ponto}</Info>
       </InfoContainer>
       <AppendButton />
@@ -156,6 +165,22 @@ const Votation = ({ socket, votavel, pontoId, index, ponto, anexo, openSnackbar 
       <NextButton />
     </Container>
   );
+};
+
+Votation.propTypes = {
+  id: PropTypes.number.isRequired,
+  tipo: PropTypes.string.isRequired,
+  reuniaoId: PropTypes.number.isRequired,
+  votavel: PropTypes.bool.isRequired,
+  pontoId: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  ponto: PropTypes.string.isRequired,
+  anexo: PropTypes.string.isRequired,
+  openSnackbar: PropTypes.func.isRequired,
+  socket: PropTypes.shape({
+    on: PropTypes.func.isRequired,
+    emit: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withSnackbarBottom(Votation);
