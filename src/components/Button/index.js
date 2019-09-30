@@ -12,4 +12,7 @@ export default styled.button`
   :hover {
     background-color: #d26966;
   }
+  @media (max-width: 500px) {
+    font-size: 14px;
+  }
 `;

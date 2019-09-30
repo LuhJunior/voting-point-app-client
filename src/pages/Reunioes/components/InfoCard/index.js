@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Tooltip, IconButton, Modal } from '@material-ui/core';
-
+import { withRouter } from 'react-router-dom';
 import Card from '../../../../components/Card';
 import Button from '../../../../components/Button';
 import { withSnackbarBottom } from '../../../../components/SnackbarBottom';
@@ -17,15 +17,27 @@ import {
   DeletarIcon,
   PontosIcon,
   ModalContainer,
+  ButtonContainer,
 } from './styles';
 
 import api from '../../../../services/api';
 
 const InfoCard = ({
-  id, titulo, data, horaInicio, segundaChamada, tipo, habilitar, status, pontos, openSnackbar,
+  id,
+  titulo,
+  data,
+  horaInicio,
+  segundaChamada,
+  tipo,
+  habilitar,
+  status,
+  pontos,
+  openSnackbar,
+  history,
 }) => {
   const [pontosModal, setPontosModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [join, setJoin] = useState(status !== null && status.descricao !== 'Finalizada');
 
   const habilitarButton = () => (!habilitar && status === null
     && data === new Date().toLocaleDateString()
@@ -35,7 +47,8 @@ const InfoCard = ({
   const handleHabilitar = async (e) => {
     e.preventDefault();
     try {
-      const resposta = await api.put(`reuniao/status/${id}`, { descricao: 'Habilitada' });
+      const resposta = await api.put(`/reuniao/status/${id}`, { descricao: 'Habilitada' });
+      setJoin(true);
       openSnackbar('Reunião ativada');
       console.log(resposta.data);
     } catch (e) {
@@ -45,13 +58,17 @@ const InfoCard = ({
 
   const handleDeletar = async () => {
     try {
-      const resposta = await api.delete(`reuniao/${id}`);
+      const resposta = await api.delete(`/reuniao/${id}`);
       openSnackbar('Reunião deletada');
-      setDeleteModal(false);
       console.log(resposta.data);
     } catch (e) {
+      setDeleteModal(false);
       console.log(e);
     }
+  };
+
+  const handleJoinMeeting = () => {
+    history.push('/reuniao');
   };
 
   return (
@@ -81,6 +98,11 @@ const InfoCard = ({
           <Title>Data da reunião</Title>
           <Info style={{ marginBottom: 0 }}>{data}</Info>
         </InfoContainer>
+        {
+          join ? (
+            <Button style={{ width: '43%' }} onClick={handleJoinMeeting}>Juntar-se à reunião</Button>
+          ) : null
+        }
       </LineContainer>
       <IconContainer>
         <Tooltip title="Visualizar Pontos">
@@ -114,7 +136,11 @@ const InfoCard = ({
       >
         <ModalContainer>
           <Card style={{ flexDirection: 'column' }}>
-            {pontos.map(({ ponto }) => (<LineContainer><Info>{ponto}</Info></LineContainer>))}
+            <Title style={{ alignSelf: 'center' }}>Pontos da reunião</Title>
+            {pontos.map(({ id: key, ponto }) => (<LineContainer key={key}><Info>{ponto}</Info></LineContainer>))}
+            <ButtonContainer>
+              <Button onClick={() => setPontosModal(false)}>Fechar</Button>
+            </ButtonContainer>
           </Card>
         </ModalContainer>
       </Modal>
@@ -123,11 +149,11 @@ const InfoCard = ({
         onClose={() => setDeleteModal(false)}
       >
         <ModalContainer>
-          <Card>
+          <Card style={{ flexDirection: 'column' }}>
             <LineContainer>
               <Title>Tem certeza que quer apagar a reunião ?</Title>
             </LineContainer>
-            <LineContainer>
+            <LineContainer style={{ justifyContent: 'space-between' }}>
               <InfoContainer>
                 <Button onClick={handleDeletar}>Deletar</Button>
               </InfoContainer>
@@ -142,4 +168,4 @@ const InfoCard = ({
   );
 };
 
-export default React.memo(withSnackbarBottom(InfoCard));
+export default React.memo(withRouter(withSnackbarBottom(InfoCard)));

@@ -30,7 +30,7 @@ const StartMeeting = ({ id, tipo, reuniaoId, socket }) => {
 };
 
 StartMeeting.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   tipo: PropTypes.string.isRequired,
   reuniaoId: PropTypes.number.isRequired,
   socket: PropTypes.shape({

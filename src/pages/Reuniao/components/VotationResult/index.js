@@ -18,6 +18,7 @@ const VotationResult = ({
   const [contra, setContra] = useState(0);
   const [abstencao, setAbstencao] = useState(0);
   const [resultado, setResultado] = useState('');
+  const [votos, setVotos] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -33,11 +34,18 @@ const VotationResult = ({
         setFavor(favoraveis);
         setContra(contras);
         setAbstencao(abstencoes);
+        setVotos(data);
 
-        if (favoraveis > quantidadeMinima) setResultado('Aprovado');
-        else if (favoraveis === quantidadeMinima) setResultado('Empate');
-        else setResultado('Reprovado');
-
+        if (favoraveis > quantidadeMinima) {
+          setResultado('Aprovado');
+          await api.put(`/ponto/${pontoId}`, { situacao: 'Aprovado' });
+        } else if (favoraveis === quantidadeMinima) {
+          setResultado('Empate');
+          await api.put(`/ponto/${pontoId}`, { situacao: 'Empate' });
+        } else {
+          setResultado('Reprovado');
+          await api.put(`/ponto/${pontoId}`, { situacao: 'Reprovado' });
+        }
         console.log(data);
       } catch (e) {
         console.log(e);
@@ -54,20 +62,37 @@ const VotationResult = ({
     socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
   };
 
-  const handleMinerva = (voto) => {
-    socket.emit('minerva_vote', { presidenteId: id, voto });
+  const handleMinerva = async (voto) => {
+    try {
+      const resposta = await api.post('/votacao', {
+        secreto: false,
+        user_id: id,
+        voto_type: (voto ? 'Favorável' : 'Contrário'),
+        ponto_id: pontoId,
+      });
+      await api.put(`/ponto/${pontoId}`, { situacao: voto ? 'Aprovado' : 'Reprovado' });
+      console.log(resposta.data);
+      socket.emit('minerva_vote', { presidenteId: id, voto });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
     <Container>
       <InfoContainer>
         <InfoTitle>{`Resultado da votação do ponto "${ponto}"`}</InfoTitle>
+        {
+          votos.length <= 10 && votos.map(({ User, VotoType }) => (
+            <Info key={User.matricula}>{`${User.nome} votou ${VotoType.tipo}`}</Info>
+          ))
+        }
         <Info>{`Votos a favor: ${favor}`}</Info>
         <Info>{`Votos Contra: ${contra}`}</Info>
         <Info>{`Abstenções: ${abstencao}`}</Info>
         <InfoTitle>{`Situação: ${resultado}`}</InfoTitle>
         {
-          () => {
+          (() => {
             if (tipo === 'Presidente' && resultado === 'Empate') {
               return (
                 <ButtonContainer>
@@ -84,7 +109,7 @@ const VotationResult = ({
               );
             }
             return null;
-          }
+          })()
         }
       </InfoContainer>
     </Container>
@@ -92,7 +117,7 @@ const VotationResult = ({
 };
 
 VotationResult.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   tipo: PropTypes.string.isRequired,
   pontoId: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,

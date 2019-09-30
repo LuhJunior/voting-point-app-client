@@ -20,6 +20,7 @@ import api from '../../../../services/api';
 const Votation = ({
   id, tipo,
   socket, votavel, pontoId, index, ponto, anexo,
+  reuniaoId,
   openSnackbar,
 }) => {
   const [start, setStart] = useState(false);
@@ -132,8 +133,13 @@ const Votation = ({
     socket.emit('next_topic', { secretaryId: id, ponto: index + 1 });
   };
 
-  const handleEndMeeting = () => {
-    socket.emit('end_meeting', { secretaryId: id });
+  const handleEndMeeting = async () => {
+    try {
+      await api.put(`/reuniao/status/${reuniaoId}`, { descricao: 'Finalizada' });
+      socket.emit('end_meeting', { secretaryId: id });
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const NextButton = () => {
@@ -168,14 +174,13 @@ const Votation = ({
 };
 
 Votation.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   tipo: PropTypes.string.isRequired,
-  reuniaoId: PropTypes.number.isRequired,
   votavel: PropTypes.bool.isRequired,
   pontoId: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
   ponto: PropTypes.string.isRequired,
-  anexo: PropTypes.string.isRequired,
+  anexo: PropTypes.bool.isRequired,
   openSnackbar: PropTypes.func.isRequired,
   socket: PropTypes.shape({
     on: PropTypes.func.isRequired,

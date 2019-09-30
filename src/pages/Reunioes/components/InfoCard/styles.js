@@ -80,8 +80,22 @@ export const PontosIcon = styled(SpeakerNotesRounded)`
 
 export const ModalContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  height: 100%;
   align-self: center;
-  justify-self: center;
   justify-content: center;
   align-items: center;
+  @media (max-width: 500px) {
+    padding: 10%;
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  border-top-width: 1px;
+  border-top-color: #ccc;
+  margin-top: 10px;
+  padding-top: 10px;
 `;

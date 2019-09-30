@@ -7,6 +7,7 @@ import QuorumCount from './components/QuorumCount';
 import Pauta from './components/Pauta';
 import Votation from './components/Votation';
 import VotationResult from './components/VotationResult';
+import MeetingResult from './components/MeetingResult';
 import InfoComponent from './components/InfoComponent';
 
 import {
@@ -62,7 +63,9 @@ const Reuniao = () => {
 
   socket.on('votation_result', () => setEtapa('votation_result'));
 
-  socket.on('end_meeting', () => setEtapa('resultado'));
+  socket.on('end_meeting', async () => {
+    setEtapa('resultado');
+  });
 
   const getPonto = () => {
     if (ponto === -1) {
@@ -98,13 +101,13 @@ const Reuniao = () => {
     if (etapa === 'antes_reunião') return <InfoComponent msg={`A Reunião começará às ${reuniao.hora_inicio} horas`} />;
     if (etapa === 'criar_sala') {
       if (tipo === 'Administrador') return <StartMeeting reuniaoId={reuniao.id} {...userData} />;
-      return <InfoComponent msg="Aguarde a reunião ser habilitada" />;
+      return <InfoComponent msg="Aguarde a sala da reunião ser criada" />;
     }
     if (etapa === 'quorum') {
       if (tipo === 'Administrador') return <QuorumCount reuniaoId={reuniao.id} {...userData} />;
       return <Pauta {...userData} pontos={reuniao.Ponto} />;
     }
-    if (etapa === 'votation') return <Votation {...userData} {...getPonto()} />;
+    if (etapa === 'votation') return <Votation {...userData} reuniaoId={reuniao.id} {...getPonto()} />;
     if (etapa === 'votation_result') {
       return (
         <VotationResult
@@ -115,7 +118,7 @@ const Reuniao = () => {
         />
       );
     }
-    if (etapa === 'resultado') return <InfoComponent msg="Resultado da Reunião:" />;
+    if (etapa === 'resultado') return <MeetingResult id={reuniao.id} />;
     return null;
   };
 

@@ -8,7 +8,7 @@ import {
   ButtonContainer,
 } from './styles';
 
-// import api from '../../../../services/api';
+import api from '../../../../services/api';
 
 const QuorumCount = ({ id, tipo, reuniaoId, socket }) => {
 
@@ -41,10 +41,11 @@ const QuorumCount = ({ id, tipo, reuniaoId, socket }) => {
     })();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     /* const id = sessionStorage.getItem('@user_id'); */
     e.preventDefault();
     socket.emit('start_meeting', { secretaryId: id });
+    await api.put(`/reuniao/status/${reuniaoId}`, { descricao: 'Ativada' });
   };
 
   const StartButton = () => (quantidade > quorum ? (
